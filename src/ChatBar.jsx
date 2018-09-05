@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
 
-class MessageList  extends React.Component {
-
+class ChatBar  extends React.Component {
   render() {
     return (
-      <nav className="ChatBar">
+      <footer className="chatbar">
         <input className="chatbar-username" placeholder="Your Name (Optional)" />
         <input className="chatbar-message" placeholder="Type a message and hit ENTER" />
-      </nav>
+      </footer>
     );
   }
 }
 
-export default  MessageList;
+
+export default ChatBar;
