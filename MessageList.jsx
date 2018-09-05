@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
+import message from './Message.jsx'
 
 class MessageList  extends React.Component {
-
+// map each prop to 
   render() {
     return (
-      <nav className="ChatBar">
-        <input className="chatbar-username" placeholder="Your Name (Optional)" />
-        <input className="chatbar-message" placeholder="Type a message and hit ENTER" />
-      </nav>
+    <main className="messages">
+      <Message/>
+    </main>
     );
   }
 }
