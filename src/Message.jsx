@@ -4,18 +4,36 @@ import React, {Component} from 'react';
 class Message  extends React.Component {
 
   render() {
-    console.log('inside message routine. This.prop stores : ', this.props);
-    
     return ( 
       <div className="message">
-        <span className="message-username" ref = 'msguser' >{this.props.username}</span>
-        <span className="message-content" ref = 'msgcontent'>{this.props.message}</span>
+        <span className="message-username" >{this.props.username}</span>
+        <span className="message-content" >{this.props.message}</span>
       </div>
     );
   }
 }
 
 export default Message;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Compose the message based on the message type. Incoming Messages have no user.

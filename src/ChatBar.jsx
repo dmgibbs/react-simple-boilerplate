@@ -2,42 +2,29 @@ import React, {Component} from 'react';
 
 class ChatBar  extends React.Component {
 
-  constructor(){
-    super();
+  constructor(props){
+    super(props); 
 
-    this.state  = 
-    {
-      currentUser:{name:""},
-      username:"",
-      message:"" 
-    };
-
-    //this.handleKey = this.handleKey.bind(this);
+    // this.state  = 
+    // {
+    //   currentUser:{name:""},
+    //   username:"",
+    //   message:"" 
   }
 
-  handleKey(event){
+  handleKey = (event) => {
     if (event.charCode === 13)
     {
-      let chatmsg = document.getElementsByClassName("chatbar-message")[0].value;
-      let chatusr = document.getElementsByClassName("chatbar-username")[0].value;
-      if (chatmsg && chatusr){
-        const oldmsgs = this.state.messages;
-        const newMsgs = [...oldmsgs, chatmsg];
-        this.setState ({messages: newMsgs})
-      }
+      let chatmsg = event.target.value;
+      this.props.updateMsgContainer(chatmsg);
+      event.target.value='';
     }
-  
-    // const newMsgs = [...oldmsgs, "I got something !!"];
-    // console.log('At least msgs stores: ', newMsgs)
-    // this.setState({ messages: newMsgs });
-
-
   }
-  
+ 
   render() {
     return (
       <footer className="chatbar">
-        <input className="chatbar-username"  placeholder="Your Name (Optional)" />
+        <input className="chatbar-username" onBlur = {this.handleNameChange} placeholder="Your Name (Optional)" defaultValue = {this.props.user.name} />
         <input className="chatbar-message" onKeyPress = {this.handleKey} placeholder="Type a message and hit ENTER" />
       </footer>
     );

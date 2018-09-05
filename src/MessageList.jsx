@@ -5,8 +5,7 @@ import Message from './Message.jsx';
 class MessageList  extends React.Component {
   render() {
     
-    const msgObject = this.props.messages.map( message =>  <Message key = {message.id} message ={message.content} username = {message.username} /> ); 
-    console.log("new object: ", msgObject);
+    const msgObject = this.props.messages.map( (message,index) =>  <Message key = {index} message ={message.content} username = {message.username} /> ); 
 
     return (
     <main className="messages">
