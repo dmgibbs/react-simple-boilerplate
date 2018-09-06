@@ -4,6 +4,7 @@ import ChatBar  from './ChatBar.jsx';
 import Message from   './Message.jsx';
 import MessageList from   './MessageList.jsx';
 
+
 const data = {
   currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
   messages: [
@@ -23,62 +24,94 @@ class App extends Component {
     super(props);
 
     // Setting up the initial state of the app with some basic data from an array
-    
     this.state = 
     {
       currentUser: data.currentUser ,  
-      messages: data.messages
+      messages: data.messages,
+      messageType:"",
+      connectedUsers:0
     }
   }
 
+  numUsers = () =>{
+    this.setState({connectedUsers: connectedUsers++})
+  }
+
   updateMsgContainer = (event) => {
-    // if (value){
-      const oldmsgs = this.state.messages;
-      
-     // Send message to the server using websocket 
-      //let msgObject = value;
+    
+    const oldmsgs = this.state.messages;
+    // Send message to the server using websocket 
+    //let msgObject = value;
     // Test if the event class chosen is the username
     if (event.target.className==="chatbar-username"  && event.key==="Enter") {  
-      console.log("Got here into updatemsgs - chatbar: username.. ")
       let chatName = event.target.value;
-      console.log("Message retrieved",chatName)
-      this.setState({currentUser:{name: chatName}})
+      this.setState({currentUser:{name: chatName} , messageType:'postNotification'});
+      let newUsermsg = `${this.state.currentUser.name} has been changed to ${chatName}`;
+
+      /*-----------------------------------*/
+      const oldmsgs = this.state.messages;
+      
+      const newMsgs = [...oldmsgs, {
+        username:this.state.currentUser.name,
+        content:newUsermsg,
+        messageType:this.state.messageType
+        } ];
+      
+       // Update the message list with the notification thing.. 
+      this.setState({messages: newMsgs})
+
+      // package the new message to send it to the server
+      let packagedMsg =   JSON.stringify (
+        { message : newUsermsg, 
+          currentUser: this.state.currentUser.name,
+          messageType: this.state.messageType
+        });
+
+      this.socket.send(packagedMsg);
+      // Receive back the message from the server with a new uuid
+      this.socket.onmessage = (event) => {
+        const messageFromServer = JSON.parse(event.data)
+
+      }
+      // }  
+
+      /*-----------------------------------*/  
+
     }
 // Now check if the event is the message field
     else  if (event.target.className==="chatbar-message" && event.key==="Enter") { 
-      console.log("Got here into updatemsgs - chatbar: message section. ")
-      let chatmessage= event.target.value
-      console.log("Message retrieved",chatmessage)
 
+      let chatmessage= event.target.value
+      // console.log("Message retrieved",chatmessage)
       const oldmsgs = this.state.messages;
-    
+            
+      event.target.value = '';
+      
       // Send message to the server using websocket 
-       //let msgObject = value;
  
        let packagedMsg =   JSON.stringify (
        { message : chatmessage, 
-         currentUser: this.state.currentUser.name
+         currentUser: this.state.currentUser.name,
+         messageType: this.state.messageType
        });
+
        this.socket.send(packagedMsg);
          // Receive back the message from the server with a new uuid
        this.socket.onmessage = (event) => {
          const messageFromServer = JSON.parse(event.data)
          console.log('Got this from server: ',messageFromServer  );
+         
          const newMsgs = [...oldmsgs, {
-           username:this.state.currentUser.name,
-           content:chatmessage
-           } ];
-         this.setState ({messages: newMsgs})
+          username:messageFromServer.username,
+          id: messageFromServer.id,
+          content:messageFromServer.message,
+          messageType: 'incomingMessage'
+        } ];
 
-      event.target.value = '';
-    }
+        this.setState ({messages: newMsgs, messageType: "postMessage"});
+      }
   }
 }
-
-
-
-
-
 
   componentDidMount() {
     console.log("componentDidMount <App />");
@@ -92,39 +125,29 @@ class App extends Component {
       this.setState({messages: messages})
     }, 1000);
     
+/* Testing the type of message sent from the server */
+    // this.socket.onmessage = (event) => {
+    //   const msg = JSON.parse(event.data)
+    //   console.log("I just got this: ", msg);
+    // }
+
     /* When there is a new connection , create one for each user that connects */
 
     const clientConnection = new WebSocket('ws://localhost:3001');
     this.socket = clientConnection;
-
-
-
   }
-
-  handleNameChange = (event) => {
-    if (event.charCode === 13){
-      console.log("Username was : ", this.props.username);
-      console.log("new name is:",event.target.value);
-    }
-  }
-
+  
   render() {
     const user = data.currentUser;
-
     return (
       <div>
         <Navigation />
         <MessageList messages = {this.state.messages}/>
         <ChatBar updateMsgContainer = {this.updateMsgContainer} 
          currentUser = {this.state.currentUser.name}/>
+         <numClients />
       </div>
     );
   }
 }
 export default App;
-
-
-// <div className="message">
-//   <span className="message-username">Anonymous1</span>
-//   <span className="message-content">I won't be impressed with technology until I can download food.</span>
-// </div>
