@@ -26,36 +26,54 @@ class App extends Component {
     
     this.state = 
     {
-      currentUser: data.currentUser.name ,  
+      currentUser: data.currentUser ,  
       messages: data.messages
     }
   }
 
-  updateMsgContainer = (value) => {
-  //     
-    if (value){
+  updateMsgContainer = (event) => {
+    // if (value){
       const oldmsgs = this.state.messages;
-    
+      
      // Send message to the server using websocket 
       //let msgObject = value;
+    // Test if the event class chosen is the username
+    if (event.target.className==="chatbar-username"  && event.key==="Enter") {  
+      console.log("Got here into updatemsgs - chatbar: username.. ")
+      let chatName = event.target.value;
+      console.log("Message retrieved",chatName)
+      this.setState({currentUser:{name: chatName}})
+    }
+// Now check if the event is the message field
+    else  if (event.target.className==="chatbar-message" && event.key==="Enter") { 
+      console.log("Got here into updatemsgs - chatbar: message section. ")
+      let chatmessage= event.target.value
+      console.log("Message retrieved",chatmessage)
 
-      let packagedMsg =   JSON.stringify (
-      { message : value, 
-        currentUser: this.state.currentUser
-      });
-      this.socket.send(packagedMsg);
-        // Receive back the message from the server with a new uuid
-      this.socket.onmessage = (event) => {
-        const messageFromServer = JSON.parse(event.data)
-        console.log('Got this from server: ',messageFromServer  );
-        const newMsgs = [...oldmsgs, {
-          username:this.state.currentUser,
-          content:value
-          } ];
-        this.setState ({messages: newMsgs})
-      } 
+      const oldmsgs = this.state.messages;
+    
+      // Send message to the server using websocket 
+       //let msgObject = value;
+ 
+       let packagedMsg =   JSON.stringify (
+       { message : chatmessage, 
+         currentUser: this.state.currentUser.name
+       });
+       this.socket.send(packagedMsg);
+         // Receive back the message from the server with a new uuid
+       this.socket.onmessage = (event) => {
+         const messageFromServer = JSON.parse(event.data)
+         console.log('Got this from server: ',messageFromServer  );
+         const newMsgs = [...oldmsgs, {
+           username:this.state.currentUser.name,
+           content:chatmessage
+           } ];
+         this.setState ({messages: newMsgs})
+
+      event.target.value = '';
     }
   }
+}
 
 
 
@@ -98,7 +116,7 @@ class App extends Component {
         <Navigation />
         <MessageList messages = {this.state.messages}/>
         <ChatBar updateMsgContainer = {this.updateMsgContainer} 
-         user = {data.currentUser}/>
+         currentUser = {this.state.currentUser.name}/>
       </div>
     );
   }
