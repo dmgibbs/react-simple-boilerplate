@@ -45,36 +45,43 @@ class App extends Component {
     // Test if the event class chosen is the username
     if (event.target.className==="chatbar-username"  && event.key==="Enter") {  
       let chatName = event.target.value;
+      console.log(" called chatname with new name of :", chatName);
       this.setState({currentUser:{name: chatName} , messageType:'postNotification'});
+
+      console.log(" New notification for username change ", this.state.messageType);
       let newUsermsg = `${this.state.currentUser.name} has been changed to ${chatName}`;
 
       /*-----------------------------------*/
       const oldmsgs = this.state.messages;
-      
-      const newMsgs = [...oldmsgs, {
-        username:this.state.currentUser.name,
-        content:newUsermsg,
-        messageType:this.state.messageType
-        } ];
-      
-       // Update the message list with the notification thing.. 
+
+      // Update the message list with the notification thing.. 
       this.setState({messages: newMsgs})
 
       // package the new message to send it to the server
       let packagedMsg =   JSON.stringify (
         { message : newUsermsg, 
           currentUser: this.state.currentUser.name,
-          messageType: this.state.messageType
+          messageType: 'postNotification'
         });
-
+      
       this.socket.send(packagedMsg);
       // Receive back the message from the server with a new uuid
       this.socket.onmessage = (event) => {
-        const messageFromServer = JSON.parse(event.data)
-
+        console.log(event);
+        // if message relates to connection OPEN/CLOSE
+        // got user count info... do something
+        // else
+          const messageFromServer = JSON.parse(event.data)
+       
       }
-      // }  
-
+      
+      const newMsgs = [...oldmsgs, {
+        username:this.state.currentUser.name,
+        content:newUsermsg,
+        messageType:'incomingNotification'
+        } ];
+            
+        this.setState({messages: newMsgs})  
       /*-----------------------------------*/  
 
     }
@@ -92,13 +99,14 @@ class App extends Component {
        let packagedMsg =   JSON.stringify (
        { message : chatmessage, 
          currentUser: this.state.currentUser.name,
-         messageType: this.state.messageType
+         messageType: 'postMessage'
        });
 
        this.socket.send(packagedMsg);
          // Receive back the message from the server with a new uuid
        this.socket.onmessage = (event) => {
          const messageFromServer = JSON.parse(event.data)
+        
          console.log('Got this from server: ',messageFromServer  );
          
          const newMsgs = [...oldmsgs, {
@@ -108,7 +116,8 @@ class App extends Component {
           messageType: 'incomingMessage'
         } ];
 
-        this.setState ({messages: newMsgs, messageType: "postMessage"});
+        this.setState ({messages: newMsgs, messageType: "postMessage"}); 
+        console.log("Now messages should store: ", newMsgs);
       }
   }
 }
@@ -125,20 +134,21 @@ class App extends Component {
       this.setState({messages: messages})
     }, 1000);
     
-/* Testing the type of message sent from the server */
-    // this.socket.onmessage = (event) => {
-    //   const msg = JSON.parse(event.data)
-    //   console.log("I just got this: ", msg);
-    // }
+    // Testing the type of message sent from the server */
+      
+     
 
     /* When there is a new connection , create one for each user that connects */
 
     const clientConnection = new WebSocket('ws://localhost:3001');
     this.socket = clientConnection;
+   
+
   }
   
   render() {
     const user = data.currentUser;
+    console.log(" Message List has:",this.state.messages)
     return (
       <div>
         <Navigation />

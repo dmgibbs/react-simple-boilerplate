@@ -11,9 +11,7 @@ class ChatBar  extends React.Component {
       message:"" 
    }
   }
-  // handleKey = (event) => {
-   
-  // }
+  
  
   render() {
     return (
