@@ -5,7 +5,6 @@ class Message  extends React.Component {
 
   render() {
     const msgString  = (this.props.messageType === "incomingNotification") ? "message system" : "message";
-    console.log("I am storing : ", this.props);
     const theUser = (this.props.username ) ? <span className = "message-username">{this.props.username}</span>:
     null;
   return (

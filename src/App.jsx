@@ -33,29 +33,23 @@ class App extends Component {
     }
   }
 
-  numUsers = () =>{
-    this.setState({connectedUsers: connectedUsers++})
-  }
+ 
 
   updateMsgContainer = (event) => {
     
     const oldmsgs = this.state.messages;
     // Send message to the server using websocket 
-    //let msgObject = value;
     // Test if the event class chosen is the username
     if (event.target.className==="chatbar-username"  && event.key==="Enter") {  
       let chatName = event.target.value;
-      console.log(" called chatname with new name of :", chatName);
       this.setState({currentUser:{name: chatName} , messageType:'postNotification'});
 
-      console.log(" New notification for username change ", this.state.messageType);
       let newUsermsg = `${this.state.currentUser.name} has been changed to ${chatName}`;
 
       /*-----------------------------------*/
       const oldmsgs = this.state.messages;
 
       // Update the message list with the notification thing.. 
-      this.setState({messages: newMsgs})
 
       // package the new message to send it to the server
       let packagedMsg =   JSON.stringify (
@@ -63,35 +57,15 @@ class App extends Component {
           currentUser: this.state.currentUser.name,
           messageType: 'postNotification'
         });
-      
       this.socket.send(packagedMsg);
-      // Receive back the message from the server with a new uuid
-      this.socket.onmessage = (event) => {
-        console.log(event);
-        // if message relates to connection OPEN/CLOSE
-        // got user count info... do something
-        // else
-          const messageFromServer = JSON.parse(event.data)
-       
-      }
-      
-      const newMsgs = [...oldmsgs, {
-        username:this.state.currentUser.name,
-        content:newUsermsg,
-        messageType:'incomingNotification'
-        } ];
-            
-        this.setState({messages: newMsgs})  
-      /*-----------------------------------*/  
+     
 
     }
 // Now check if the event is the message field
     else  if (event.target.className==="chatbar-message" && event.key==="Enter") { 
 
       let chatmessage= event.target.value
-      // console.log("Message retrieved",chatmessage)
       const oldmsgs = this.state.messages;
-            
       event.target.value = '';
       
       // Send message to the server using websocket 
@@ -101,10 +75,8 @@ class App extends Component {
          currentUser: this.state.currentUser.name,
          messageType: 'postMessage'
        });
-
        this.socket.send(packagedMsg);
-         // Receive back the message from the server with a new uuid
-       
+       // Receive back the message from the server with a new uuid
   }
 }
 
@@ -121,34 +93,30 @@ class App extends Component {
     }, 1000);
     
     // Testing the type of message sent from the server */
-      
-     
-
     /* When there is a new connection , create one for each user that connects */
 
     const clientConnection = new WebSocket('ws://localhost:3001');
     this.socket = clientConnection;
+    
+    // Process messages from the server. Update the message list
     this.socket.onmessage = (event) => {
-      const messageFromServer = JSON.parse(event.data)
-     
-      console.log('Got this from server: ',messageFromServer  );
+      const messageFromServer = JSON.parse(event.data);
+      if (messageFromServer.type === "userconnections"){
+        this.setState({connectedUsers: messageFromServer.users});
+        console.log(`current number of users, ${this.state.connectedUsers}`);
+      } else {
+          const oldmsgs = this.state.messages;
+    
+          const newMsgs = [...oldmsgs, {
+          username:messageFromServer.username,
+          id: messageFromServer.id,
+          content:messageFromServer.message,
+          messageType: messageFromServer.messageType
+      } ];
       
-
-      // let chatmessage= event.target.value
-      // console.log("Message retrieved",chatmessage)
-      const oldmsgs = this.state.messages;
-
-
-      const newMsgs = [...oldmsgs, {
-       username:messageFromServer.username,
-       id: messageFromServer.id,
-       content:messageFromServer.message,
-       messageType: 'incomingMessage'
-     } ];
-
-     this.setState ({messages: newMsgs, messageType: "postMessage"}); 
-     console.log("Now messages should store: ", newMsgs);
-   }
+      this.setState ({messages: newMsgs, messageType: "postMessage"}); 
+    }
+  }
 
   }
   
@@ -157,11 +125,11 @@ class App extends Component {
     console.log(" Message List has:",this.state.messages)
     return (
       <div>
-        <Navigation />
+        <Navigation users ={this.state.connectedUsers} />
         <MessageList messages = {this.state.messages}/>
         <ChatBar updateMsgContainer = {this.updateMsgContainer} 
          currentUser = {this.state.currentUser.name}/>
-         <numClients />
+        
       </div>
     );
   }

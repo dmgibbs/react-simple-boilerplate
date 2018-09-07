@@ -12,7 +12,6 @@ class ChatBar  extends React.Component {
    }
   }
   
- 
   render() {
     return (
       <footer className="chatbar">
