@@ -104,21 +104,7 @@ class App extends Component {
 
        this.socket.send(packagedMsg);
          // Receive back the message from the server with a new uuid
-       this.socket.onmessage = (event) => {
-         const messageFromServer = JSON.parse(event.data)
-        
-         console.log('Got this from server: ',messageFromServer  );
-         
-         const newMsgs = [...oldmsgs, {
-          username:messageFromServer.username,
-          id: messageFromServer.id,
-          content:messageFromServer.message,
-          messageType: 'incomingMessage'
-        } ];
-
-        this.setState ({messages: newMsgs, messageType: "postMessage"}); 
-        console.log("Now messages should store: ", newMsgs);
-      }
+       
   }
 }
 
@@ -142,7 +128,27 @@ class App extends Component {
 
     const clientConnection = new WebSocket('ws://localhost:3001');
     this.socket = clientConnection;
-   
+    this.socket.onmessage = (event) => {
+      const messageFromServer = JSON.parse(event.data)
+     
+      console.log('Got this from server: ',messageFromServer  );
+      
+
+      // let chatmessage= event.target.value
+      // console.log("Message retrieved",chatmessage)
+      const oldmsgs = this.state.messages;
+
+
+      const newMsgs = [...oldmsgs, {
+       username:messageFromServer.username,
+       id: messageFromServer.id,
+       content:messageFromServer.message,
+       messageType: 'incomingMessage'
+     } ];
+
+     this.setState ({messages: newMsgs, messageType: "postMessage"}); 
+     console.log("Now messages should store: ", newMsgs);
+   }
 
   }
   
