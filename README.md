@@ -29,11 +29,9 @@ This repository is for the project, the objective of which was for us to practic
    broadcasted to the server and redisplayed on the application's user interface.
 
 ## Screenshots
-[Main Window of Application]
-(https://github.com/dmgibbs/react-simple-boilerplate/blob/master/docs/Main%20window%20one%20active%20user.png)
+[Main Window of Application](https://github.com/dmgibbs/react-simple-boilerplate/blob/master/docs/Main%20window%20one%20active%20user.png)
 
-[Screenshot showing 2 users online]
-(https://github.com/dmgibbs/react-simple-boilerplate/blob/master/docs/2%20users%20online%20and%20name%20changed.png)
+[Screenshot showing 2 users online](https://github.com/dmgibbs/react-simple-boilerplate/blob/master/docs/2%20users%20online%20and%20name%20changed.png)
 
 ## Dependencies
 
