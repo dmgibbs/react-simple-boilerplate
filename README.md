@@ -20,6 +20,7 @@ This repository is for the project, the objective of which was for us to practic
     "ws": "^6.0.0"
 
 3. Start the web server using the `npm start` command. The app will be served at <http://localhost:3001/>.
+
 5. Go to <http://localhost:3001/> in your browser.
 
 
@@ -28,7 +29,11 @@ This repository is for the project, the objective of which was for us to practic
    broadcasted to the server and redisplayed on the application's user interface.
 
 ## Screenshots
+[Main Window of Application]
+(https://github.com/dmgibbs/react-simple-boilerplate/blob/master/docs/Main%20window%20one%20active%20user.png)
 
+[Screenshot showing 2 users online]
+(https://github.com/dmgibbs/react-simple-boilerplate/blob/master/docs/2%20users%20online%20and%20name%20changed.png)
 
 ## Dependencies
 
@@ -49,10 +54,3 @@ This repository is for the project, the objective of which was for us to practic
 - sockjs-client
 - style-loader
 - uuid
-
-## Install the dependencies and start the server.
-
-```
-npm install
-npm start
-open http://localhost:3000
