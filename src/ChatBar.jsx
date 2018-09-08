@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 
 class ChatBar  extends React.Component {
+//  This module renders the chatbar component of the APP.
+//  the callback handler UpdateMsgContainer is used to transmit data back to APP when 
+//  keypressed.
 
   constructor(props){
     super(props); 
